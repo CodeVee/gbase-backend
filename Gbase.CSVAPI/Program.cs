@@ -1,5 +1,4 @@
-using Gbase.CSVAPI.Data;
-using Microsoft.EntityFrameworkCore;
+using Gbase.CSVAPI.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,17 +8,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-var version = new MySqlServerVersion(new Version(8, 0, 29));
-builder.Services.AddDbContext<AppDbContext>(
-   dbContextOptions => dbContextOptions
-       .UseMySql(connectionString, version,
-           mySqlOptions => {
-               mySqlOptions.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName);
-               mySqlOptions.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery);
-           })
-);
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
 var corsPolicy = "CorsPollicy";
 builder.Services.AddCors(options =>
